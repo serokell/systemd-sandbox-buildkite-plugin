@@ -1,0 +1,13 @@
+steps:
+  - label: "shellcheck"
+    command: "nix-shell --run 'shellcheck hooks/*'"
+
+  - label: "test"
+    command: "nix-shell --run 'bats tests'"
+
+  - wait
+
+  - label: run
+    command: "echo hello world"
+    plugin:
+      ${BUILDKITE_REPO}#${BUILDKITE_COMMIT}: ~
