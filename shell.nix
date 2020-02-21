@@ -1,5 +1,5 @@
-{ pkgs ? import <nixpkgs> {} }: with pkgs;
+{ pkgs ? import ./nix {} }: with pkgs;
 
 mkShell {
-  buildInputs = [ bats shellcheck ];
+  buildInputs = [ bats shellcheck nix-prefetch-git bk buildkite-agent ];
 }
