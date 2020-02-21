@@ -1,0 +1,3 @@
+name: SystemD Sandbox
+description: Runs build steps within a systemd sandbox.
+author: https://github.com/serokell
