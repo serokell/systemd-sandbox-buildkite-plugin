@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+set -x
+
+echo "--- Running ${BUILDKITE_COMMAND} in SystemD sandbox"
+
+CMD_FILE="$(mktemp)"
+cat <<-EOF >| "$CMD_FILE"
+#!/usr/bin/env bash
+set -xe
+
+${BUILDKITE_COMMAND}
+EOF
+chmod +x "$CMD_FILE"
+cat "$CMD_FILE"
+
+function cleanup {
+    rm -f "$CMD_FILE"
+}
+trap cleanup EXIT
+
+sudo systemd-run --quiet --wait --collect --pipe \
+    --property Type=simple --property DynamicUser=true \
+    --property ProtectSystem=strict --property StateDirectory="$BUILDKITE_AGENT_NAME" \
+    --property UMask=077 \
+    --setenv HOME="$BUILDKITE_AGENT_NAME" --setenv PATH="$PATH" --setenv NIX_PATH="${NIX_PATH:-}" \
+        "$CMD_FILE"

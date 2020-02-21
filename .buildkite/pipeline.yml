@@ -1,13 +1,19 @@
 steps:
   - label: "shellcheck"
     command: "nix-shell --run 'shellcheck hooks/*'"
+    agents:
+      mkaito: true
 
   - label: "test"
     command: "nix-shell --run 'bats tests'"
+    agents:
+      mkaito: true
 
   - wait
 
   - label: run
     command: "echo hello world"
-    plugin:
-      ${BUILDKITE_REPO}#${BUILDKITE_COMMIT}: ~
+    plugins:
+      serokell/systemd-sandbox#${BUILDKITE_COMMIT}: ~
+    agents:
+      mkaito: true
